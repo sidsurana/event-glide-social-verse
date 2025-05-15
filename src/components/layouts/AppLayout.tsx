@@ -22,7 +22,7 @@ const AppLayout = ({ children, initialTab = "explore", onTabChange }: AppLayoutP
   return (
     <div className="min-h-screen flex flex-col">
       <TopBar activeTab={activeTab} />
-      <main className="flex-1 container mx-auto px-4 pb-24 pt-4">
+      <main className="flex-1 container mx-auto px-4 pb-24 pt-4 relative">
         {children}
       </main>
       <BottomTabs activeTab={activeTab} onTabChange={handleTabChange} />

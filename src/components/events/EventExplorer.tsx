@@ -4,6 +4,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import SwipeableEventCard from "./SwipeableEventCard";
 import { Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 // Sample data
 const sampleSocialEvents = [
@@ -114,6 +115,7 @@ const EventExplorer = () => {
   const [socialEvents, setSocialEvents] = useState(sampleSocialEvents);
   const [networkingEvents, setNetworkingEvents] = useState(sampleNetworkingEvents);
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentTab, setCurrentTab] = useState("social");
   
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -132,12 +134,19 @@ const EventExplorer = () => {
   );
   
   const handleRemoveSocialEvent = (id: string) => {
-    setSocialEvents(socialEvents.filter(event => event.id !== id));
+    setSocialEvents(prev => prev.filter(event => event.id !== id));
   };
   
   const handleRemoveNetworkingEvent = (id: string) => {
-    setNetworkingEvents(networkingEvents.filter(event => event.id !== id));
+    setNetworkingEvents(prev => prev.filter(event => event.id !== id));
   };
+  
+  const handleTabChange = (value: string) => {
+    setCurrentTab(value);
+  };
+  
+  const currentSocialEvent = filteredSocialEvents[0];
+  const currentNetworkingEvent = filteredNetworkingEvents[0];
 
   return (
     <div>
@@ -152,42 +161,60 @@ const EventExplorer = () => {
         />
       </div>
       
-      <Tabs defaultValue="social">
+      <Tabs value={currentTab} onValueChange={handleTabChange}>
         <TabsList className="grid grid-cols-2 mb-6">
           <TabsTrigger value="social">Social</TabsTrigger>
           <TabsTrigger value="networking">Networking</TabsTrigger>
         </TabsList>
         
-        <TabsContent value="social" className="space-y-4">
+        <TabsContent value="social" className="min-h-[300px] flex flex-col items-center justify-center">
           {filteredSocialEvents.length > 0 ? (
-            filteredSocialEvents.map(event => (
+            <div className="w-full max-w-md mx-auto">
               <SwipeableEventCard 
-                key={event.id}
-                {...event}
-                onSwipeLeft={() => handleRemoveSocialEvent(event.id)}
-                onSwipeRight={() => handleRemoveSocialEvent(event.id)}
+                key={currentSocialEvent.id}
+                {...currentSocialEvent}
+                onSwipeLeft={() => handleRemoveSocialEvent(currentSocialEvent.id)}
+                onSwipeRight={() => handleRemoveSocialEvent(currentSocialEvent.id)}
               />
-            ))
+              <div className="text-center text-sm text-muted-foreground mt-4">
+                {filteredSocialEvents.length} events remaining
+              </div>
+            </div>
           ) : (
             <div className="text-center py-10">
-              <p className="text-muted-foreground">No social events found</p>
+              <p className="text-muted-foreground mb-4">No more social events</p>
+              <Button 
+                onClick={() => setSocialEvents(sampleSocialEvents)} 
+                className="ios-button"
+              >
+                Refresh Events
+              </Button>
             </div>
           )}
         </TabsContent>
         
-        <TabsContent value="networking" className="space-y-4">
+        <TabsContent value="networking" className="min-h-[300px] flex flex-col items-center justify-center">
           {filteredNetworkingEvents.length > 0 ? (
-            filteredNetworkingEvents.map(event => (
+            <div className="w-full max-w-md mx-auto">
               <SwipeableEventCard 
-                key={event.id}
-                {...event}
-                onSwipeLeft={() => handleRemoveNetworkingEvent(event.id)}
-                onSwipeRight={() => handleRemoveNetworkingEvent(event.id)}
+                key={currentNetworkingEvent.id}
+                {...currentNetworkingEvent}
+                onSwipeLeft={() => handleRemoveNetworkingEvent(currentNetworkingEvent.id)}
+                onSwipeRight={() => handleRemoveNetworkingEvent(currentNetworkingEvent.id)}
               />
-            ))
+              <div className="text-center text-sm text-muted-foreground mt-4">
+                {filteredNetworkingEvents.length} events remaining
+              </div>
+            </div>
           ) : (
             <div className="text-center py-10">
-              <p className="text-muted-foreground">No networking events found</p>
+              <p className="text-muted-foreground mb-4">No more networking events</p>
+              <Button 
+                onClick={() => setNetworkingEvents(sampleNetworkingEvents)} 
+                className="ios-button"
+              >
+                Refresh Events
+              </Button>
             </div>
           )}
         </TabsContent>
