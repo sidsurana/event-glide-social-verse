@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AppLayout from "@/components/layouts/AppLayout";
 import AuthForm from "@/components/auth/AuthForm";
 import EventExplorer from "@/components/events/EventExplorer";
@@ -13,6 +13,23 @@ import AvailableNow from "@/components/availability/AvailableNow";
 const Index = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(true); // Set to false for authentication flow
   const [activeTab, setActiveTab] = useState("explore");
+  
+  useEffect(() => {
+    // Listen for navigation events from other components
+    const handleNavigation = (event: CustomEvent<{ tab: string }>) => {
+      setActiveTab(event.detail.tab);
+    };
+    
+    window.addEventListener('app:navigate', handleNavigation as EventListener);
+    
+    return () => {
+      window.removeEventListener('app:navigate', handleNavigation as EventListener);
+    };
+  }, []);
+  
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+  };
   
   if (!isLoggedIn) {
     return <AuthForm />;
@@ -40,7 +57,7 @@ const Index = () => {
   };
   
   return (
-    <AppLayout initialTab={activeTab}>
+    <AppLayout initialTab={activeTab} onTabChange={handleTabChange}>
       {renderTabContent()}
     </AppLayout>
   );

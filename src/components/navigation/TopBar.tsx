@@ -7,15 +7,22 @@ import ThemeToggle from "@/components/ThemeToggle";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
 
-const TopBar = () => {
+interface TopBarProps {
+  activeTab?: string;
+}
+
+const TopBar = ({ activeTab }: TopBarProps) => {
   const [isSearching, setIsSearching] = useState(false);
   const { toast } = useToast();
   
   const handleNotificationClick = () => {
-    toast({
-      title: "Notifications",
-      description: "You have 3 new notifications",
-    });
+    const event = new CustomEvent('app:navigate', { detail: { tab: 'notifications' } });
+    window.dispatchEvent(event);
+  };
+  
+  const handleSettingsClick = () => {
+    const event = new CustomEvent('app:navigate', { detail: { tab: 'settings' } });
+    window.dispatchEvent(event);
   };
 
   return (
@@ -52,7 +59,10 @@ const TopBar = () => {
                 <span className="absolute top-0 right-0 h-2.5 w-2.5 bg-ios-red rounded-full" />
               </button>
               
-              <button className="p-2 rounded-full hover:bg-secondary transition-colors">
+              <button 
+                onClick={handleSettingsClick}
+                className="p-2 rounded-full hover:bg-secondary transition-colors"
+              >
                 <Settings className="h-5 w-5" />
               </button>
               
@@ -66,7 +76,7 @@ const TopBar = () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
                   <DropdownMenuItem>Profile</DropdownMenuItem>
-                  <DropdownMenuItem>Settings</DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleSettingsClick}>Settings</DropdownMenuItem>
                   <DropdownMenuItem className="text-ios-red">Sign Out</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

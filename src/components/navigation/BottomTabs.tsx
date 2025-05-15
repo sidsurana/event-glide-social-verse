@@ -1,5 +1,4 @@
 
-import { useState } from "react";
 import { Compass, Clock, Plus, Calendar, Users } from "lucide-react";
 
 interface TabButtonProps {
@@ -20,14 +19,12 @@ const TabButton = ({ icon, label, isActive, onClick }: TabButtonProps) => (
 );
 
 interface BottomTabsProps {
+  activeTab: string;
   onTabChange: (tab: string) => void;
 }
 
-const BottomTabs = ({ onTabChange }: BottomTabsProps) => {
-  const [activeTab, setActiveTab] = useState("explore");
-  
+const BottomTabs = ({ activeTab, onTabChange }: BottomTabsProps) => {
   const handleTabChange = (tab: string) => {
-    setActiveTab(tab);
     onTabChange(tab);
   };
   
